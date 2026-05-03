@@ -1,34 +1,31 @@
 name: Build Lovem APK
 on: [push, workflow_dispatch]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Java
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4 # Güncellendi: v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4 # Güncellendi: v4
         with:
-          distribution: 'temurin'
-          java-version: '11'
-          
+          node-version: '20' # Modern node versiyonu
+
       - name: Install Cordova
         run: npm install -g cordova
-        
-      - name: Prepare Project
+
+      - name: Create and Build Project
         run: |
-          cordova create build_folder com.kadir.lovem Lovem
-          cp index.html build_folder/www/index.html
-          cp config.xml build_folder/config.xml
-          
-      - name: Build Android
-        run: |
-          cd build_folder
+          cordova create tmp_proj com.kadir.lovem Lovem
+          cp index.html tmp_proj/www/index.html
+          cp config.xml tmp_proj/config.xml
+          cd tmp_proj
           cordova platform add android@10.1.1
           cordova build android --debug
-          
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4 # İşte hata veren yer burasıydı, v4 yaptık!
         with:
           name: Lovem-Uygulamasi
-          path: build_folder/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          path: tmp_proj/platforms/android/app/build/outputs/apk/debug/app-debug.apk
