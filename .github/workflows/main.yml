@@ -12,20 +12,17 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          
       - name: Install Cordova
         run: npm install -g cordova
         
-      - name: Build APK
+      - name: Prepare Project
         run: |
           cordova create build_folder com.kadir.lovem Lovem
-          # Dosyaların varlığını kontrol ederek kopyalıyoruz
-          [ -f index.html ] && cp index.html build_folder/www/index.html || echo "index.html bulunamadı"
-          [ -f config.xml ] && cp config.xml build_folder/config.xml || echo "config.xml bulunamadı"
+          cp index.html build_folder/www/index.html
+          cp config.xml build_folder/config.xml
+          
+      - name: Build Android
+        run: |
           cd build_folder
           cordova platform add android@10.1.1
           cordova build android --debug
