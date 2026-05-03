@@ -1,0 +1,26 @@
+name: Build Lovem APK
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Install Cordova
+        run: npm install -g cordova
+      - name: Build APK
+        run: |
+          cordova create build_folder com.kadir.lovem Lovem
+          cp index.html build_folder/www/
+          cp config.xml build_folder/
+          cd build_folder
+          cordova platform add android
+          cordova build android --debug
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: Lovem-Uygulamasi
+          path: build_folder/platforms/android/app/build/outputs/apk/debug/app-debug.apk
