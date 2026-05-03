@@ -3,57 +3,103 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lovem - Benzersiz Odalar</title>
+    <title>Lovem - Bizim Dünyamız</title>
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; background: #1e1e1e; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { color: #FF69B4; }
-        input, textarea { width: 90%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #2a2a2a; color: white; text-align: center; font-size: 16px; outline: none; }
-        button { width: 95%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-create { background: transparent; color: #FF69B4; border: 1px solid #FF69B4; }
+        body { background-color: #121212; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .container { width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; background: #1e1e1e; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        h1 { color: #FF69B4; font-size: 28px; margin-bottom: 5px; }
+        input { width: 90%; padding: 14px; margin: 10px 0; border-radius: 15px; border: 1px solid #333; background: #2a2a2a; color: white; text-align: center; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #FF69B4; box-shadow: 0 0 10px rgba(255, 105, 180, 0.3); }
+        button { width: 95%; padding: 15px; margin: 10px 0; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .btn-create { background: transparent; color: #FF69B4; border: 2px solid #FF69B4; }
         .btn-login { background: #FF69B4; color: white; }
-        #secret-page { display: none; width: 100%; min-height: 100vh; background: #D81B60; position: fixed; top: 0; left: 0; padding: 20px; box-sizing: border-box; }
+        button:active { transform: scale(0.95); }
+
+        /* ÖZEL TATLI MESAJ PANELİ */
+        #custom-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; }
+        .alert-box { width: 85%; max-width: 320px; background: #252525; padding: 30px; border-radius: 30px; border-bottom: 5px solid #FF69B4; text-align: center; animation: waveIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes waveIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .alert-icon { font-size: 60px; margin-bottom: 15px; display: block; }
+        .alert-text { font-size: 18px; margin-bottom: 25px; line-height: 1.5; color: #fff; font-weight: 500; }
+        .alert-btn { background: #FF69B4; color: white; padding: 12px; border-radius: 12px; border: none; width: 100%; font-size: 16px; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4); }
+
+        /* GİZLİ ODA TASARIMI */
+        #secret-page { display: none; width: 100%; min-height: 100vh; background: #D81B60; position: fixed; top: 0; left: 0; padding: 25px; box-sizing: border-box; z-index: 100; overflow-y: auto; }
+        textarea { width: 100%; height: 250px; padding: 15px; border-radius: 20px; border: none; background: rgba(255,255,255,0.9); color: #333; font-size: 16px; margin-top: 20px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div class="container" id="login-screen">
-        <div style="font-size: 50px;">🔐</div>
+        <div style="font-size: 60px; margin-bottom: 10px;">🔐</div>
         <h1>Lovem</h1>
-        <p>Her kilit dünyaya açılan tek bir kapıdır.</p>
+        <p style="color: #aaa;">Sadece bize özel bir dünya...</p>
         
-        <input type="text" id="new-lock" placeholder="Benzersiz Bir Kilit Oluştur...">
-        <button class="btn-create" onclick="odaOlustur()">Kilidi Mühürle</button>
+        <input type="text" id="new-lock" placeholder="Yeni Kilit İsmi...">
+        <button class="btn-create" onclick="odaOlustur()">Kilidi Oluştur</button>
         
-        <div style="height: 1px; background: #333; margin: 20px 0;"></div>
+        <div style="height: 1px; background: #333; margin: 25px 0;"></div>
         
-        <input type="password" id="entry-lock" placeholder="Oda Kilidini Yaz...">
+        <input type="password" id="entry-lock" placeholder="Kilidini Yaz sevgilim...">
         <button class="btn-login" onclick="odayaGir()">Odaya Gir</button>
     </div>
 
+    <div id="custom-alert">
+        <div class="alert-box">
+            <span id="alert-icon" class="alert-icon"></span>
+            <div id="alert-message" class="alert-text"></div>
+            <button class="alert-btn" onclick="alertKapat()">Tamam sevgilim ❤️</button>
+        </div>
+    </div>
+
     <div id="secret-page">
-        <button onclick="location.reload()" style="float: right; background: white; color: #D81B60; padding: 5px 15px; border-radius: 10px;">Çıkış</button>
-        <h2 id="room-title"></h2>
-        <textarea id="room-data" style="height: 200px; text-align: left;" placeholder="Anılarını buraya yaz..."></textarea>
-        <button style="background: white; color: #D81B60;" onclick="kaydet()">Anıyı Kaydet</button>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="room-badge" style="background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; font-size: 12px;"></span>
+            <button onclick="location.reload()" style="width: auto; background: white; color: #D81B60; padding: 8px 20px;">Çıkış Yap</button>
+        </div>
+        
+        <h2 id="room-title" style="margin-top: 40px; font-size: 24px;"></h2>
+        <textarea id="room-data" placeholder="Bugün neler anlatmak istersin?"></textarea>
+        
+        <button style="background: #fff; color: #D81B60; margin-top: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);" onclick="kaydet()">
+            Anıyı Kaydet 🌹
+        </button>
     </div>
 
     <script>
         let aktifOda = "";
 
+        // MERKEZİ UYARI SİSTEMİ (Bundan sonra her yerde bunu kullanacağız)
+        function uyar(mesaj, ikon) {
+            document.getElementById('alert-message').innerText = mesaj;
+            document.getElementById('alert-icon').innerText = ikon;
+            document.getElementById('custom-alert').style.display = 'flex';
+        }
+
+        function alertKapat() {
+            document.getElementById('custom-alert').style.display = 'none';
+        }
+
         function odaOlustur() {
             let kilit = document.getElementById('new-lock').value.trim();
-            if (kilit.length < 3) { alert("Kilit çok kısa! ❤️"); return; }
+            
+            if (kilit === "") {
+                uyar("Lütfen önce bir kilit ismi yazar mısın? Boş bırakmayalım sevgilim. 😊", "✍️");
+                return;
+            }
+            if (kilit.length < 3) { 
+                uyar("Bu kilit çok kısa sevgilim, en az 3 harf olsun ki güvenli olsun! ❤️", "📏"); 
+                return; 
+            }
 
             let odalar = JSON.parse(localStorage.getItem('oda_listesi') || "[]");
 
-            // AYNI KİLİT KONTROLÜ
             if (odalar.includes(kilit)) {
-                alert("❌ Bu kilit daha önce mühürlenmiş! Lütfen başka bir isim seç sevgilim.");
+                uyar("❌ Bu kilit daha önce mühürlenmiş! Başka bir isim deneyelim mi?", "🔐");
             } else {
                 odalar.push(kilit);
                 localStorage.setItem('oda_listesi', JSON.stringify(odalar));
-                alert("✅ Kilit başarıyla mühürlendi! Artık bu oda sadece senin.");
+                uyar("Kilit başarıyla mühürlendi! Artık bu oda sadece senin için var. ✅", "💖");
                 document.getElementById('new-lock').value = "";
             }
         }
@@ -62,20 +108,31 @@
             let girilen = document.getElementById('entry-lock').value.trim();
             let odalar = JSON.parse(localStorage.getItem('oda_listesi') || "[]");
 
+            if (girilen === "") {
+                uyar("Kilidi yazmayı unuttun sevgilim! 🗝️", "🤔");
+                return;
+            }
+
             if (odalar.includes(girilen)) {
                 aktifOda = girilen;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('secret-page').style.display = 'block';
-                document.getElementById('room-title').innerText = "Oda: " + aktifOda;
+                document.getElementById('room-title').innerText = "🌹 " + aktifOda + " Odası 🌹";
+                document.getElementById('room-badge').innerText = "Aktif Kilit: " + aktifOda;
                 document.getElementById('room-data').value = localStorage.getItem('data_' + aktifOda) || "";
             } else {
-                alert("💔 Bu kilit hiçbir kapıyı açmıyor...");
+                uyar("Maalesef bu kilit hiçbir kapıyı açmıyor... Tekrar dene mi sevgilim? 💔", "🗝️");
             }
         }
 
         function kaydet() {
-            localStorage.setItem('data_' + aktifOda, document.getElementById('room-data').value);
-            alert("İşlem kaydedildi! ✨");
+            let veri = document.getElementById('room-data').value;
+            if (veri.trim() === "") {
+                uyar("Boş bir anı kaydetmeyelim, bir şeyler karalamak ister misin? ✍️", "☁️");
+                return;
+            }
+            localStorage.setItem('data_' + aktifOda, veri);
+            uyar("Anımız başarıyla kalbimize kaydedildi sevgilim! ✨", "🌹");
         }
     </script>
 </body>
