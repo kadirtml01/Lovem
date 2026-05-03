@@ -5,21 +5,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: '16'
+          
       - name: Install Cordova
         run: npm install -g cordova
+        
       - name: Build APK
         run: |
           cordova create build_folder com.kadir.lovem Lovem
-          cp index.html build_folder/www/
-          cp config.xml build_folder/
+          # Dosyaları güvenli bir şekilde kopyalayalım
+          cp index.html build_folder/www/index.html
+          cp config.xml build_folder/config.xml
           cd build_folder
-          cordova platform add android
+          cordova platform add android@10.1.1
           cordova build android --debug
-      - name: Upload
+          
+      - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: Lovem-Uygulamasi
