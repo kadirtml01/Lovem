@@ -3,87 +3,79 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lovem - Bizim Dünyamız</title>
+    <title>Lovem - Benzersiz Odalar</title>
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; transition: 0.5s; }
-        .container { width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; background: #1e1e1e; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        h1 { color: #FF69B4; font-size: 26px; margin-bottom: 10px; }
-        p { color: #888; font-size: 14px; }
-        
+        body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; background: #1e1e1e; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #FF69B4; }
         input, textarea { width: 90%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #2a2a2a; color: white; text-align: center; font-size: 16px; outline: none; }
-        textarea { height: 150px; text-align: left; resize: none; }
-        
-        button { width: 95%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .btn-create { background-color: #333; color: #FF69B4; border: 1px solid #FF69B4; }
-        .btn-login { background-color: #FF69B4; color: white; }
-        .btn-save { background-color: #D81B60; color: white; margin-top: 20px; }
-
-        #secret-room { display: none; width: 100%; max-width: 500px; flex-direction: column; align-items: center; padding: 20px; }
-        .heart { font-size: 50px; margin-bottom: 10px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        button { width: 95%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-create { background: transparent; color: #FF69B4; border: 1px solid #FF69B4; }
+        .btn-login { background: #FF69B4; color: white; }
+        #secret-page { display: none; width: 100%; min-height: 100vh; background: #D81B60; position: fixed; top: 0; left: 0; padding: 20px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <div class="container" id="login-ui">
-        <div class="heart">❤️</div>
+    <div class="container" id="login-screen">
+        <div style="font-size: 50px;">🔐</div>
         <h1>Lovem</h1>
-        <p>Kilit oluştur veya giriş yap</p>
-
-        <input type="text" id="new-lock" placeholder="Yeni Anahtar Belirle...">
-        <button class="btn-create" onclick="kilitOlustur()">Kilidi Mühürle</button>
-
+        <p>Her kilit dünyaya açılan tek bir kapıdır.</p>
+        
+        <input type="text" id="new-lock" placeholder="Benzersiz Bir Kilit Oluştur...">
+        <button class="btn-create" onclick="odaOlustur()">Kilidi Mühürle</button>
+        
         <div style="height: 1px; background: #333; margin: 20px 0;"></div>
-
-        <input type="password" id="entry-lock" placeholder="Kilidini Yaz...">
+        
+        <input type="password" id="entry-lock" placeholder="Oda Kilidini Yaz...">
         <button class="btn-login" onclick="odayaGir()">Odaya Gir</button>
     </div>
 
-    <div id="secret-room">
-        <h1 style="color: #FFC0CB;">🌹 Bizim Odamız 🌹</h1>
-        <p style="color: #eee;">Buraya yazdığın her şey sadece bu anahtarla açılır.</p>
-        
-        <textarea id="user-notes" placeholder="Bugün neler hissettin sevgilim?..."></textarea>
-        
-        <button class="btn-save" onclick="notuKaydet()">Anımızı Kaydet ❤️</button>
-        <button onclick="location.reload()" style="background: transparent; color: white; border: 1px solid white; width: auto; font-size: 12px;">Çıkış Yap</button>
+    <div id="secret-page">
+        <button onclick="location.reload()" style="float: right; background: white; color: #D81B60; padding: 5px 15px; border-radius: 10px;">Çıkış</button>
+        <h2 id="room-title"></h2>
+        <textarea id="room-data" style="height: 200px; text-align: left;" placeholder="Anılarını buraya yaz..."></textarea>
+        <button style="background: white; color: #D81B60;" onclick="kaydet()">Anıyı Kaydet</button>
     </div>
 
     <script>
-        function kilitOlustur() {
-            var kilit = document.getElementById('new-lock').value.trim();
-            if (kilit.length < 3) {
-                alert("Kilit çok kısa! ❤️");
-                return;
+        let aktifOda = "";
+
+        function odaOlustur() {
+            let kilit = document.getElementById('new-lock').value.trim();
+            if (kilit.length < 3) { alert("Kilit çok kısa! ❤️"); return; }
+
+            let odalar = JSON.parse(localStorage.getItem('oda_listesi') || "[]");
+
+            // AYNI KİLİT KONTROLÜ
+            if (odalar.includes(kilit)) {
+                alert("❌ Bu kilit daha önce mühürlenmiş! Lütfen başka bir isim seç sevgilim.");
+            } else {
+                odalar.push(kilit);
+                localStorage.setItem('oda_listesi', JSON.stringify(odalar));
+                alert("✅ Kilit başarıyla mühürlendi! Artık bu oda sadece senin.");
+                document.getElementById('new-lock').value = "";
             }
-            localStorage.setItem('ask_kilidi', kilit);
-            alert("Anahtarın hazır! Artık odaya bu şifreyle girebilirsin.");
-            document.getElementById('new-lock').value = "";
         }
 
         function odayaGir() {
-            var girilenKilit = document.getElementById('entry-lock').value.trim();
-            var kayitliKilit = localStorage.getItem('ask_kilidi');
+            let girilen = document.getElementById('entry-lock').value.trim();
+            let odalar = JSON.parse(localStorage.getItem('oda_listesi') || "[]");
 
-            if (girilenKilit === kayitliKilit) {
-                document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('secret-room').style.display = 'flex';
-                document.body.style.backgroundColor = "#D81B60";
-                
-                // Kayıtlı notu getir
-                var eskiNot = localStorage.getItem('bizim_notumuz');
-                if (eskiNot) {
-                    document.getElementById('user-notes').value = eskiNot;
-                }
+            if (odalar.includes(girilen)) {
+                aktifOda = girilen;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('secret-page').style.display = 'block';
+                document.getElementById('room-title').innerText = "Oda: " + aktifOda;
+                document.getElementById('room-data').value = localStorage.getItem('data_' + aktifOda) || "";
             } else {
-                alert("Yanlış anahtar sevgilim! 💔");
+                alert("💔 Bu kilit hiçbir kapıyı açmıyor...");
             }
         }
 
-        function notuKaydet() {
-            var not = document.getElementById('user-notes').value;
-            localStorage.setItem('bizim_notumuz', not);
-            alert("Anımız başarıyla kaydedildi! Yarın geldiğinde burada olacak. ✨");
+        function kaydet() {
+            localStorage.setItem('data_' + aktifOda, document.getElementById('room-data').value);
+            alert("İşlem kaydedildi! ✨");
         }
     </script>
 </body>
