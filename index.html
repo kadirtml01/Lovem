@@ -3,39 +3,77 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lovem</title>
+    <title>Lovem - Akıllı Kilit</title>
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        #login-screen { width: 100%; }
-        #secret-content { display: none; background-color: #FFC0CB; height: 100vh; width: 100%; color: #D81B60; padding-top: 50px; }
-        input { padding: 15px; border-radius: 10px; border: 1px solid #FF69B4; margin-bottom: 20px; text-align: center; width: 60%; background: #222; color: white; }
-        button { padding: 15px 30px; background-color: #FF69B4; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; }
-        .heart { font-size: 60px; margin-bottom: 10px; animation: pulse 1.5s infinite; }
+        body { background-color: #121212; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .container { width: 90%; max-width: 400px; padding: 20px; border-radius: 20px; background: #1e1e1e; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #FF69B4; margin-bottom: 5px; font-size: 24px; }
+        p { color: #aaa; font-size: 14px; margin-bottom: 25px; }
+        .heart { font-size: 50px; margin-bottom: 20px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        
+        input { width: 80%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #333; background: #2a2a2a; color: white; text-align: center; font-size: 16px; outline: none; }
+        input:focus { border-color: #FF69B4; }
+        
+        button { width: 85%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-create { background-color: #444; color: #ddd; }
+        .btn-login { background-color: #FF69B4; color: white; font-size: 18px; }
+        
+        #secret-room { display: none; background: #FFC0CB; color: #D81B60; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; justify-content: center; align-items: center; flex-direction: column; }
+        
+        .divider { height: 1px; background: #333; margin: 20px 0; }
     </style>
 </head>
 <body>
-    <div id="login-screen">
+
+    <div class="container" id="main-ui">
         <div class="heart">❤️</div>
-        <h2>Bizim Odamız</h2>
-        <input type="password" id="sifre" placeholder="Özel Şifremiz..."><br>
-        <button onclick="kontrolEt()">Giriş Yap</button>
+        <h1>Lovem'e Hoş Geldin</h1>
+        <p>Aşkın kilidini oluştur veya odaya gir.</p>
+
+        <input type="text" id="new-lock" placeholder="Yeni bir kilit belirle...">
+        <button class="btn-create" onclick="kilitOlustur()">Kilidi Kaydet</button>
+
+        <div class="divider"></div>
+
+        <input type="password" id="entry-lock" placeholder="Kilidi Buraya Yaz...">
+        <button class="btn-login" onclick="odayaGir()">Odaya Gir</button>
     </div>
-    <div id="secret-content">
-        <h1>🌹 Seni Seviyorum 🌹</h1>
-        <p>Burası sadece bize özel...</p>
-        <div style="font-size: 80px;">💑</div>
+
+    <div id="secret-room">
+        <h1>🌹 Hoş Geldin Sevgilim 🌹</h1>
+        <p style="color: #D81B60; font-size: 18px;">Bu anahtar sadece bizim için yaratıldı.</p>
+        <div style="font-size: 100px;">💑</div>
+        <button onclick="location.reload()" style="background: white; color: #D81B60; width: auto; margin-top: 50px;">Kilidi Kapat</button>
     </div>
+
     <script>
-        function kontrolEt() {
-            var sifre = document.getElementById('sifre').value;
-            if (sifre === "1234") {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('secret-content').style.display = 'block';
+        // Kilitleri telefonun hafızasına kaydeder (Local Storage)
+        function kilitOlustur() {
+            var kilit = document.getElementById('new-lock').value.trim();
+            if (kilit.length < 3) {
+                alert("Kilit çok kısa sevgilim, en az 3 karakter olsun! ❤️");
+                return;
+            }
+            localStorage.setItem('ask_kilidi', kilit);
+            alert("Kilit başarıyla oluşturuldu! Artık bu anahtarla giriş yapılabilir. ✨");
+            document.getElementById('new-lock').value = "";
+        }
+
+        function odayaGir() {
+            var girilenKilit = document.getElementById('entry-lock').value.trim();
+            var kayitliKilit = localStorage.getItem('ask_kilidi');
+
+            if (!kayitliKilit) {
+                alert("Henüz bir kilit oluşturulmamış! Önce yukarıdan bir anahtar belirle. 🗝️");
+            } else if (girilenKilit === kayitliKilit) {
+                document.getElementById('main-ui').style.display = 'none';
+                document.getElementById('secret-room').style.display = 'flex';
                 document.body.style.backgroundColor = "#FFC0CB";
             } else {
-                alert("Yanlış şifre sevgilim! ❤️");
+                alert("Maalesef bu anahtar kalbimi açmadı... Tekrar dene sevgilim! 💔");
             }
-        </script>
+        }
+    </script>
 </body>
 </html>
