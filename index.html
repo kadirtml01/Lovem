@@ -3,60 +3,61 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lovem - Akıllı Kilit</title>
+    <title>Lovem - Bizim Dünyamız</title>
     <style>
-        body { background-color: #121212; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .container { width: 90%; max-width: 400px; padding: 20px; border-radius: 20px; background: #1e1e1e; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { color: #FF69B4; margin-bottom: 5px; font-size: 24px; }
-        p { color: #aaa; font-size: 14px; margin-bottom: 25px; }
-        .heart { font-size: 50px; margin-bottom: 20px; animation: pulse 1.5s infinite; }
+        body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; transition: 0.5s; }
+        .container { width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; background: #1e1e1e; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        h1 { color: #FF69B4; font-size: 26px; margin-bottom: 10px; }
+        p { color: #888; font-size: 14px; }
+        
+        input, textarea { width: 90%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #2a2a2a; color: white; text-align: center; font-size: 16px; outline: none; }
+        textarea { height: 150px; text-align: left; resize: none; }
+        
+        button { width: 95%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-create { background-color: #333; color: #FF69B4; border: 1px solid #FF69B4; }
+        .btn-login { background-color: #FF69B4; color: white; }
+        .btn-save { background-color: #D81B60; color: white; margin-top: 20px; }
+
+        #secret-room { display: none; width: 100%; max-width: 500px; flex-direction: column; align-items: center; padding: 20px; }
+        .heart { font-size: 50px; margin-bottom: 10px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        
-        input { width: 80%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #333; background: #2a2a2a; color: white; text-align: center; font-size: 16px; outline: none; }
-        input:focus { border-color: #FF69B4; }
-        
-        button { width: 85%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-create { background-color: #444; color: #ddd; }
-        .btn-login { background-color: #FF69B4; color: white; font-size: 18px; }
-        
-        #secret-room { display: none; background: #FFC0CB; color: #D81B60; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; justify-content: center; align-items: center; flex-direction: column; }
-        
-        .divider { height: 1px; background: #333; margin: 20px 0; }
     </style>
 </head>
 <body>
 
-    <div class="container" id="main-ui">
+    <div class="container" id="login-ui">
         <div class="heart">❤️</div>
-        <h1>Lovem'e Hoş Geldin</h1>
-        <p>Aşkın kilidini oluştur veya odaya gir.</p>
+        <h1>Lovem</h1>
+        <p>Kilit oluştur veya giriş yap</p>
 
-        <input type="text" id="new-lock" placeholder="Yeni bir kilit belirle...">
-        <button class="btn-create" onclick="kilitOlustur()">Kilidi Kaydet</button>
+        <input type="text" id="new-lock" placeholder="Yeni Anahtar Belirle...">
+        <button class="btn-create" onclick="kilitOlustur()">Kilidi Mühürle</button>
 
-        <div class="divider"></div>
+        <div style="height: 1px; background: #333; margin: 20px 0;"></div>
 
-        <input type="password" id="entry-lock" placeholder="Kilidi Buraya Yaz...">
+        <input type="password" id="entry-lock" placeholder="Kilidini Yaz...">
         <button class="btn-login" onclick="odayaGir()">Odaya Gir</button>
     </div>
 
     <div id="secret-room">
-        <h1>🌹 Hoş Geldin Sevgilim 🌹</h1>
-        <p style="color: #D81B60; font-size: 18px;">Bu anahtar sadece bizim için yaratıldı.</p>
-        <div style="font-size: 100px;">💑</div>
-        <button onclick="location.reload()" style="background: white; color: #D81B60; width: auto; margin-top: 50px;">Kilidi Kapat</button>
+        <h1 style="color: #FFC0CB;">🌹 Bizim Odamız 🌹</h1>
+        <p style="color: #eee;">Buraya yazdığın her şey sadece bu anahtarla açılır.</p>
+        
+        <textarea id="user-notes" placeholder="Bugün neler hissettin sevgilim?..."></textarea>
+        
+        <button class="btn-save" onclick="notuKaydet()">Anımızı Kaydet ❤️</button>
+        <button onclick="location.reload()" style="background: transparent; color: white; border: 1px solid white; width: auto; font-size: 12px;">Çıkış Yap</button>
     </div>
 
     <script>
-        // Kilitleri telefonun hafızasına kaydeder (Local Storage)
         function kilitOlustur() {
             var kilit = document.getElementById('new-lock').value.trim();
             if (kilit.length < 3) {
-                alert("Kilit çok kısa sevgilim, en az 3 karakter olsun! ❤️");
+                alert("Kilit çok kısa! ❤️");
                 return;
             }
             localStorage.setItem('ask_kilidi', kilit);
-            alert("Kilit başarıyla oluşturuldu! Artık bu anahtarla giriş yapılabilir. ✨");
+            alert("Anahtarın hazır! Artık odaya bu şifreyle girebilirsin.");
             document.getElementById('new-lock').value = "";
         }
 
@@ -64,15 +65,25 @@
             var girilenKilit = document.getElementById('entry-lock').value.trim();
             var kayitliKilit = localStorage.getItem('ask_kilidi');
 
-            if (!kayitliKilit) {
-                alert("Henüz bir kilit oluşturulmamış! Önce yukarıdan bir anahtar belirle. 🗝️");
-            } else if (girilenKilit === kayitliKilit) {
-                document.getElementById('main-ui').style.display = 'none';
+            if (girilenKilit === kayitliKilit) {
+                document.getElementById('login-ui').style.display = 'none';
                 document.getElementById('secret-room').style.display = 'flex';
-                document.body.style.backgroundColor = "#FFC0CB";
+                document.body.style.backgroundColor = "#D81B60";
+                
+                // Kayıtlı notu getir
+                var eskiNot = localStorage.getItem('bizim_notumuz');
+                if (eskiNot) {
+                    document.getElementById('user-notes').value = eskiNot;
+                }
             } else {
-                alert("Maalesef bu anahtar kalbimi açmadı... Tekrar dene sevgilim! 💔");
+                alert("Yanlış anahtar sevgilim! 💔");
             }
+        }
+
+        function notuKaydet() {
+            var not = document.getElementById('user-notes').value;
+            localStorage.setItem('bizim_notumuz', not);
+            alert("Anımız başarıyla kaydedildi! Yarın geldiğinde burada olacak. ✨");
         }
     </script>
 </body>
